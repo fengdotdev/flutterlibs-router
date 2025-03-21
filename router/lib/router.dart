@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:router/widgets/error_route.dart';
 
-
 class AppRouter {
   // Mapa para almacenar las rutas dinámicamente
   static final Map<String, Widget Function(BuildContext)> _routes = {};
@@ -20,7 +19,9 @@ class AppRouter {
 
     // Validar que la ruta inicial exista en las rutas registradas
     if (!_routes.containsKey(initialRoute)) {
-      throw Exception("Initial route '$initialRoute' not found in registered routes.");
+      throw Exception(
+        "Initial route '$initialRoute' not found in registered routes.",
+      );
     }
   }
 
@@ -41,9 +42,7 @@ class AppRouter {
 
     // Ruta no encontrada
     return MaterialPageRoute(
-      builder: (_) => ErrorView(
-        message: "Route '${settings.name}' not found.",
-      ),
+      builder: (_) => ErrorView(message: "Route '${settings.name}' not found."),
     );
   }
 
@@ -66,6 +65,10 @@ class AppRouter {
         ),
       );
     }
+  }
+
+  static void goBack(BuildContext context) {
+    Navigator.pop(context);
   }
 
   // Getter para la ruta inicial
