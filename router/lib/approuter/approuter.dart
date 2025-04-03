@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:router/types/args.dart';
 import 'package:router/widgets/error_route.dart';
 
 class AppRouter {
@@ -6,22 +7,14 @@ class AppRouter {
 
   static List<String> get routes => _routes.keys.toList();
 
-  static final List<String> _routeHistory = [];
-  static List<String> get routeHistory => _routeHistory;
-
-
-
+  static final List<(String,Args?)> _routeHistory = [];
+  static List<(String,Args?)> get routeHistory => _routeHistory;
 
   static final GlobalKey<NavigatorState> _navigatorKey =
       GlobalKey<NavigatorState>();
   static GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
-
-
   static String? _initialRoute;
-
-
-
 
   static void registerRoutes({
     required Map<String, Widget Function(BuildContext)> routes,
@@ -51,7 +44,7 @@ class AppRouter {
     // search for the route
     final routeBuilder = _routes[settings.name];
     if (routeBuilder != null) {
-      return MaterialPageRoute(builder: routeBuilder);
+      return MaterialPageRoute(builder: routeBuilder, settings: settings);
     }
 
     // route not found
@@ -70,6 +63,9 @@ class AppRouter {
         ),
       );
     } else if (_routes.containsKey(routeName)) {
+      // save the route to the history
+      _routeHistory.add((routeName, null));
+
       Navigator.pushNamed(context, routeName);
     } else {
       Navigator.push(
@@ -79,6 +75,40 @@ class AppRouter {
         ),
       );
     }
+  }
+
+  static void navigateToWithArgs(
+    BuildContext context,
+    String routeName,
+    Args args,
+  ) {
+    if (_routes.isEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const ErrorView(message: "No routes registered."),
+        ),
+      );
+    } else if (_routes.containsKey(routeName)) {
+      // save the route to the history
+      _routeHistory.add((routeName, args));
+      Navigator.pushNamed(context, routeName, arguments: args);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ErrorView(message: "Route '$routeName' not found."),
+        ),
+      );
+    }
+  }
+
+  static Args? mayArgs(BuildContext context) {
+    return ModalRoute.of(context)?.settings.arguments as Args?;
+  }
+
+  static Args argsOrEmpty(BuildContext context) {
+    return AppRouter.mayArgs(context) ?? Args();
   }
 
   // for navigation with out context
@@ -107,4 +137,28 @@ class AppRouter {
 
   // for returning the initial route if exists
   static String? get initialRoute => _initialRoute;
+
+
+}
+
+Args getArgs(BuildContext context) {
+  return AppRouter.mayArgs(context) ?? Args();
+}
+
+void goTo(BuildContext context, String routeName, {Args? args}) {
+  if (args != null) {
+    return AppRouter.navigateToWithArgs(context, routeName, args);
+  }
+  return AppRouter.navigateTo(context, routeName);
+}
+
+void navigateTo(BuildContext context, String routeName, {Args? args}) {
+  if (args != null) {
+    return AppRouter.navigateToWithArgs(context, routeName, args);
+  }
+  return AppRouter.navigateTo(context, routeName);
+}
+
+void goBack(BuildContext context) {
+  AppRouter.goBack(context);
 }

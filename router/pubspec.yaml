@@ -1,6 +1,6 @@
 name: router
 description: "Router is a Flutter package that makes navigation and routing easy."
-version: 0.0.1
+version: 0.1.0
 homepage:
 
 environment:

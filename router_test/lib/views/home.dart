@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:router/approuter/approuter.dart';
 import 'package:router_test/components/appdrawer.dart';
 import 'package:router_test/components/custom_appbar.dart';
 
@@ -16,7 +17,10 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Welcome to AstroMining Corp', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text('Your gateway to the future of space resource extraction.')
+            Text('Your gateway to the future of space resource extraction.'),
+            ElevatedButton(onPressed: (){
+              goTo(context, "/ship", args: {"shipName": "AstroMiner 3000"});
+            }, child: Text("Go to Mining Ship")),
           ],
         ),
       ),
@@ -24,3 +28,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+
